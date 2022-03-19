@@ -1,0 +1,35 @@
+---
+primitive_name: "to_ostream"
+brief_description: "Loads data from aligned memory into a vector register."
+parameters:
+   - ctype: "std::ostream &"
+     name: "out"
+     description: ""
+   - ctype: "typename Vec::register_type const"
+     name: "register"
+     description: ""
+returns:
+   ctype: "std::ostream &"
+   description: ""
+definitions:
+#INTEL - AVX512
+   - target_extension: "avx512"
+     ctype: "int64_t"
+     lscpu_flags: ['avx512f']
+     implementation: "return _mm512_load_si512( reinterpret_cast< void const * >( memory ) );"
+#INTEL - AVX2
+   - target_extension: "avx2"
+     ctype: "int64_t"
+     lscpu_flags: [ 'avx' ]
+     implementation: "return _mm256_load_si256( reinterpret_cast< __m256i const * >( memory ) );"
+#INTEL - SSE
+   - target_extension: "sse"
+     ctype: "int64_t"
+     lscpu_flags: [ 'sse2' ]
+     implementation: "return _mm_load_si128( reinterpret_cast< __m128i const * >( memory ) );"
+#ARM - NEON
+   - target_extension: "neon"
+     ctype: "int64_t"
+     lscpu_flags: [ 'neon' ]
+     implementation: "return vld1q_s64( memory );"
+...
