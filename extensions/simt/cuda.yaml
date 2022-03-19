@@ -3,7 +3,7 @@ description: "Definition of the SIMD TargetExtension sse."
 vendor: "gpu"
 extension_name: "cude"
 #todo: these are not all lscpu flags but a sample
-lscpu_flags: []
+lscpu_flags: ["cuda"]
 #includes: ['"cude_runtime.h"']
 includes: []
 simdT_name: "cuda"
