@@ -31,12 +31,14 @@ jobs:
         git submodule update --remote
         git add .
         git commit -m "Updated submodule primitive_data"
-    - name: Push changes to general code
-      uses: ad-m/github-push-action@v0.6.0
-      with:
-        repository: MorphStore/TVLGenerator
-        github_token: ${{ secrets.TVL_PAT }}
-        branch: main
+        git status
+        git push
+#    - name: Push changes to general code
+#      uses: ad-m/github-push-action@v0.6.0
+#      with:
+#        repository: MorphStore/TVLGenerator
+#        github_token: ${{ secrets.TVL_PAT }}
+#        branch: main
     - name: Update TVL repository
       run: |
         cd -
