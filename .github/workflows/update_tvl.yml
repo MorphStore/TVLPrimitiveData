@@ -27,6 +27,7 @@ jobs:
         cd -
     - name: Update TVL generator repository
       run: |
+        set -x
         cd generator
         git submodule update --remote
         git add .
