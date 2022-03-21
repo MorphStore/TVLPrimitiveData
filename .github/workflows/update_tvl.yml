@@ -1,0 +1,86 @@
+name: Update TVL Submodule
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout TVL repository (recursive)
+      uses: actions/checkout@v3
+      with:
+      	repository: MorphStore/TVL.git
+        token: '${{ secrets.TVL_PAT }}'
+        submodules: recursive
+    - name: Setup Git Creds
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+    - name: Update TVL generator repository
+      run: |
+        cd generator
+        git submodule update --remote
+        git add .
+        git commit -m "Updated submodule primitive_data"
+        git push origin
+        cd -
+        git submodule update --remote
+        git add .
+    - name: Set up Python 3.10.2
+      uses: actions/setup-python@v2
+      with:
+        python-version: "3.10.2"
+    - name: Install generator dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f ./generator/requirements.txt ]; then pip install -r ./generator/requirements.txt; fi
+    - name: Generate complete code
+      run: |
+        python generator/tvlgen.py -o ./lib -c generator/config -d generator/primitive_data
+        git add -A
+        git commit -m "updated tvl sources, generated with MorphStore/TVLGenerator using data from MorphStore/TVLPrimitiveData @${GITHUB_SHA}" -a
+    - name: Push changes to general code
+      uses: ad-m/github-push-action@v0.6.0
+      with:
+        github_token: ${{ secrets.TVL_PAT }}
+        branch: main
+    - name: Generate SSE code
+      run: |
+        git checkout -B sse
+        python generator/tvlgen.py -o ./lib -c generator/config -d generator/primitive_data --targets sse sse2 ssse3 sse4_1 sse4_2
+        git add -A
+        git commit -m "updated SSE sources, generated with MorphStore/TVLGenerator using data from MorphStore/TVLPrimitiveData @${GITHUB_SHA}" -a
+    - name: Push changes to SSE code
+      uses: ad-m/github-push-action@v0.6.0
+      with:
+        github_token: ${{ secrets.TVL_PAT }}
+        branch: sse
+    - name: Generate AVX2 code
+      run: |
+        git checkout -B avx2
+        python generator/tvlgen.py -o ./lib -c generator/config -d generator/primitive_data --targets sse sse2 ssse3 sse4_1 sse4_2 avx avx2
+        git add -A
+        git commit -m "updated SSE+AVX(2) sources, generated with MorphStore/TVLGenerator using data from MorphStore/TVLPrimitiveData @${GITHUB_SHA}" -a
+    - name: Push changes to AVX2 code
+      uses: ad-m/github-push-action@v0.6.0
+      with:
+        github_token: ${{ secrets.TVL_PAT }}
+        branch: avx2
+    - name: Generate NEON code
+      run: |
+        git checkout -B neon
+        python generator/tvlgen.py -o ./lib -c generator/config -d generator/primitive_data --targets neon
+        git add -A
+        git commit -m "updated Neon sources, generated with MorphStore/TVLGenerator using data from MorphStore/TVLPrimitiveData @${GITHUB_SHA}" -a
+    - name: Push changes to AVX2 code
+      uses: ad-m/github-push-action@v0.6.0
+      with:
+        github_token: ${{ secrets.TVL_PAT }}
+        branch: neon
+#	- name: Push all changes
+#      run: |
+#        git push --all origin
