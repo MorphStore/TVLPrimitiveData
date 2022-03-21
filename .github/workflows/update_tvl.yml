@@ -33,6 +33,7 @@ jobs:
         git commit -m "Updated submodule primitive_data"
         git status
         git push origin HEAD:main
+        cd -
 #    - name: Push changes to general code
 #      uses: ad-m/github-push-action@v0.6.0
 #      with:
@@ -41,7 +42,6 @@ jobs:
 #        branch: main
     - name: Update TVL repository
       run: |
-        cd -
         git submodule update --remote
         git add .
     - name: Set up Python 3.10.2
