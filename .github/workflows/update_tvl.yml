@@ -29,11 +29,12 @@ jobs:
       run: |
         set -x
         cd generator
-        git submodule update --remote
+        git submodule update --remote --merge
         git add .
         git commit -m "Updated submodule primitive_data"
         git status
-        git push origin HEAD:main
+        git push
+#       origin HEAD:main
         cd -
 #    - name: Push changes to general code
 #      uses: ad-m/github-push-action@v0.6.0
@@ -43,7 +44,7 @@ jobs:
 #        branch: main
     - name: Update TVL repository
       run: |
-        git submodule update --remote
+        git submodule update --remote --merge
         git add .
     - name: Set up Python 3.10.2
       uses: actions/setup-python@v2
