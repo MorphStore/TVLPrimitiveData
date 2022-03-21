@@ -39,17 +39,17 @@ jobs:
     - name: Merge TVL branches
       run: | 
         set -x
-        git switch refs/remotes/origin/sse
+        git switch sse
         git merge --no-commit --no-ff main
         git reset -- lib
         git commit -am "Updated branch sse"
         git push
-        git switch refs/remotes/origin/avx2
+        git switch avx2
         git merge --no-commit --no-ff main
         git reset -- lib
         git commit -am "Updated branch avx2"
         git push
-        git switch refs/remotes/origin/neon
+        git switch neon
         git merge --no-commit --no-ff main
         git reset -- lib
         git commit -am "Updated branch neon"
