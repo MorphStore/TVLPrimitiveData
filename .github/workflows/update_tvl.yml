@@ -34,8 +34,8 @@ jobs:
         git commit -m "Updated submodule primitive_data"
         git status
         git push
-#       origin HEAD:main
         cd -
+#       origin HEAD:main
 #    - name: Push changes to general code
 #      uses: ad-m/github-push-action@v0.6.0
 #      with:
