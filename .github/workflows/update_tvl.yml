@@ -19,34 +19,34 @@ jobs:
         submodules: recursive
     - name: Setup Git Creds
       run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        cd generator
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        cd -
+        git config --global user.email "action@github.com"
+        git config --global user.name "GitHub Action"
     - name: Update TVL generator repository
       run: |
         set -x
-        git submodule update --remote --recursive
-        cd generator
-        git checkout main
-        git commit -am "Updated submodule primitive_data"
+        git submodule foreach -q --recursive 'branch="$(git config -f $toplevel/.gitmodules submodule.$name.branch)"; git switch $branch'
+        cd generated
+        git add primitive_data
+        git commit -m "Updated submodule primitive_data"
         git push
-        cd -
-#       origin HEAD:main
-#    - name: Push changes to general code
-#      uses: ad-m/github-push-action@v0.6.0
-#      with:
-#        repository: MorphStore/TVLGenerator
-#        github_token: ${{ secrets.TVL_PAT }}
-#        branch: main
-    - name: Update TVL repository
+        cd ..
+    - name: Update TVL repository (main)
       run: |
-        git submodule update --remote
-        git checkout main
-        git commit -am "Updated submodule generator"
-        git push
+        set -x
+        git submodule foreach -q --recursive 'branch="$(git config -f $toplevel/.gitmodules submodule.$name.branch)"; git switch $branch'
+        git add generator
+        git commit -m "Updated submodule generator"
+    - name: Merge TVL branches
+      run: | 
+        for branch in $(git for-each-ref --format='%(refname)' refs/remotes/origin/); do
+                if [[ $branch != *(main|HEAD) ]]; then
+                   git switch "$branch"
+                   git merge --no-commit --no-ff main
+                   git reset -- lib
+                   git commit -am "Updated branch $branch"
+                   git push
+                fi
+        done
     - name: Set up Python 3.10.2
       uses: actions/setup-python@v2
       with:
@@ -57,9 +57,10 @@ jobs:
         if [ -f ./generator/requirements.txt ]; then pip install -r ./generator/requirements.txt; fi
     - name: Generate complete code
       run: |
+        git switch main
         python generator/tvlgen.py -o ./lib -c generator/config -d generator/primitive_data
-        git commit -am "updated tvl sources, interesting, generated with MorphStore/TVLGenerator using data from MorphStore/TVLPrimitiveData @${GITHUB_SHA}"
-        git fetch
+        git add -A
+        git commit -m "updated tvl sources, generated with MorphStore/TVLGenerator using data from MorphStore/TVLPrimitiveData @${GITHUB_SHA}" -a
     - name: Push changes to general code
       uses: ad-m/github-push-action@v0.6.0
       with:
@@ -70,7 +71,8 @@ jobs:
         git checkout -B sse
         git submodule update --remote
         python generator/tvlgen.py -o ./lib -c generator/config -d generator/primitive_data --targets sse sse2 ssse3 sse4_1 sse4_2
-        git commit -am "updated SSE sources, generated with MorphStore/TVLGenerator using data from MorphStore/TVLPrimitiveData @${GITHUB_SHA}"
+        git add -A
+        git commit -m "updated SSE sources, generated with MorphStore/TVLGenerator using data from MorphStore/TVLPrimitiveData @${GITHUB_SHA}" -a
     - name: Push changes to SSE code
       uses: ad-m/github-push-action@v0.6.0
       with:
@@ -81,7 +83,8 @@ jobs:
         git checkout -B avx2
         git submodule update --remote
         python generator/tvlgen.py -o ./lib -c generator/config -d generator/primitive_data --targets sse sse2 ssse3 sse4_1 sse4_2 avx avx2
-        git commit -am "updated SSE+AVX(2) sources, generated with MorphStore/TVLGenerator using data from MorphStore/TVLPrimitiveData @${GITHUB_SHA}"
+        git add -A
+        git commit -m "updated SSE+AVX(2) sources, generated with MorphStore/TVLGenerator using data from MorphStore/TVLPrimitiveData @${GITHUB_SHA}" -a
     - name: Push changes to AVX2 code
       uses: ad-m/github-push-action@v0.6.0
       with:
@@ -92,7 +95,8 @@ jobs:
         git checkout -B neon
         git submodule update --remote
         python generator/tvlgen.py -o ./lib -c generator/config -d generator/primitive_data --targets neon
-        git commit -am "updated Neon sources, generated with MorphStore/TVLGenerator using data from MorphStore/TVLPrimitiveData @${GITHUB_SHA}"
+        git add -A
+        git commit -m "updated Neon sources, generated with MorphStore/TVLGenerator using data from MorphStore/TVLPrimitiveData @${GITHUB_SHA}" -a
     - name: Push changes to AVX2 code
       uses: ad-m/github-push-action@v0.6.0
       with:
