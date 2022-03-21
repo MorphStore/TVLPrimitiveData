@@ -40,13 +40,14 @@ jobs:
       run: | 
         set -x
         for branch in $(git for-each-ref --format='%(refname)' refs/remotes/origin/); do
-                if [[ $branch != *(main|HEAD) ]]; then
-                   git switch "$branch"
-                   git merge --no-commit --no-ff main
-                   git reset -- lib
-                   git commit -am "Updated branch $branch"
-                   git push
-                fi
+           echo "$branch"
+           if [[ $branch != *(main|HEAD) ]]; then
+              git switch "$branch"
+              git merge --no-commit --no-ff main
+              git reset -- lib
+              git commit -am "Updated branch $branch"
+              git push
+           fi
         done
     - name: Set up Python 3.10.2
       uses: actions/setup-python@v2
