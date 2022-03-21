@@ -59,6 +59,7 @@ jobs:
       run: |
         python generator/tvlgen.py -o ./lib -c generator/config -d generator/primitive_data
         git commit -am "updated tvl sources, generated with MorphStore/TVLGenerator using data from MorphStore/TVLPrimitiveData @${GITHUB_SHA}"
+        git fetch
     - name: Push changes to general code
       uses: ad-m/github-push-action@v0.6.0
       with:
