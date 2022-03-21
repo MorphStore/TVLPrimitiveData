@@ -37,7 +37,7 @@ jobs:
         repository: MorphStore/TVLGenerator
         github_token: ${{ secrets.TVL_PAT }}
         branch: main
-	- name: Update TVL repository
+    - name: Update TVL repository
         cd -
         git submodule update --remote
         git add .
