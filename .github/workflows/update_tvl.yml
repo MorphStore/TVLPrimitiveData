@@ -24,6 +24,8 @@ jobs:
     - name: Update TVL generator repository
       run: |
         set -x
+        pwd
+        ls -halt
         git submodule foreach -q --recursive 'branch="$(git config -f $toplevel/.gitmodules submodule.$name.branch)"; git switch $branch'
         cd generator
         git add primitive_data
@@ -33,6 +35,8 @@ jobs:
     - name: Update TVL repository (main)
       run: |
         set -x
+        pwd
+        ls -halt
         git submodule foreach -q --recursive 'branch="$(git config -f $toplevel/.gitmodules submodule.$name.branch)"; git switch $branch'
         git add generator
         git commit -m "Updated submodule generator"
@@ -40,6 +44,7 @@ jobs:
       run: | 
         #!/bin/bash
         pwd
+        ls -halt
         set -x
         git switch sse
         git merge --no-commit --no-ff main
