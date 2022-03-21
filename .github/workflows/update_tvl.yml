@@ -38,6 +38,7 @@ jobs:
         github_token: ${{ secrets.TVL_PAT }}
         branch: main
     - name: Update TVL repository
+      run: |
         cd -
         git submodule update --remote
         git add .
