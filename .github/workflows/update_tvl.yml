@@ -38,6 +38,8 @@ jobs:
         git commit -m "Updated submodule generator"
     - name: Merge TVL branches
       run: | 
+        #!/bin/bash
+        pwd
         set -x
         git switch sse
         git merge --no-commit --no-ff main
