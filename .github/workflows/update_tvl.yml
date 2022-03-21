@@ -49,10 +49,10 @@ jobs:
            echo "Hello: $branch"
            if [[ "$branch" != *(main|HEAD) ]]; then
               echo "In If: $branch"
-              git switch sse
-              git merge --no-commit --no-ff main
+              git switch $branch
+              git merge --no-commit --no-ff --allow-unrelated-histories main
               git reset -- lib
-              git commit -am "Updated branch sse"
+              git commit -am "Updated branch $branch"
               git push
            fi
         done
