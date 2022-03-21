@@ -6,7 +6,7 @@ parameters:
      name: "out"
      description: ""
    - ctype: "typename Vec::register_type const"
-     name: "register"
+     name: "data"
      description: ""
 returns:
    ctype: "std::ostream &"
@@ -16,20 +16,34 @@ definitions:
    - target_extension: "avx512"
      ctype: "int64_t"
      lscpu_flags: ['avx512f']
-     implementation: "return _mm512_load_si512( reinterpret_cast< void const * >( memory ) );"
+     implementation: |
+         for(auto idx = 0; idx < 8; ++idx ) {
+            out << data[7-idx] << "|";
+         }
+         out << "\n";
+         return out;
 #INTEL - AVX2
    - target_extension: "avx2"
      ctype: "int64_t"
      lscpu_flags: [ 'avx' ]
-     implementation: "return _mm256_load_si256( reinterpret_cast< __m256i const * >( memory ) );"
+     implementation: |
+        for(auto idx = 0; idx < 4; ++idx ) {
+                       out << data[3-idx] << "|";
+                    }
+                    out << "\n";
+                    return out;
 #INTEL - SSE
    - target_extension: "sse"
      ctype: "int64_t"
      lscpu_flags: [ 'sse2' ]
-     implementation: "return _mm_load_si128( reinterpret_cast< __m128i const * >( memory ) );"
+     implementation: |
+         out << data[1]<< "|" << data[0] << "\n";
+         return out;
 #ARM - NEON
    - target_extension: "neon"
      ctype: "int64_t"
      lscpu_flags: [ 'neon' ]
-     implementation: "return vld1q_s64( memory );"
+     implementation: |
+         out << data[1]<< "|" << data[0] << "\n";
+         return out;
 ...

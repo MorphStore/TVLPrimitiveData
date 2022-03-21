@@ -128,39 +128,39 @@ definitions:
      lscpu_flags: [ 'neon' ]
      implementation: "return mask & 0x3;"
 ...
----
-primitive_name: "insert_delim_zero"
-brief_description: "Inserts 0 into bitmask using provided mask."
-parameters:
-   - ctype: "typename Vec::mask_type"
-     name: "data"
-     description: "Data mask register (e.g., data=0b11001011)."
-   - ctype: "typename Vec::mask_type"
-     name: "mask"
-     description: "Vector mask register containing mask which is used to insert 0 bits (e.g., mask=0b110011)"
-returns:
-   ctype: "typename Vec::mask_type"
-   description: "Data mask with inserted 0 bits (e.g., 0010{from data}00{because mask is 0 }11{from data})."
-definitions:
+#---
+#primitive_name: "insert_delim_zero"
+#brief_description: "Inserts 0 into bitmask using provided mask."
+#parameters:
+#   - ctype: "typename Vec::mask_type"
+#     name: "data"
+#     description: "Data mask register (e.g., data=0b11001011)."
+#   - ctype: "typename Vec::mask_type"
+#     name: "mask"
+#     description: "Vector mask register containing mask which is used to insert 0 bits (e.g., mask=0b110011)"
+#returns:
+#   ctype: "typename Vec::mask_type"
+#   description: "Data mask with inserted 0 bits (e.g., 0010{from data}00{because mask is 0 }11{from data})."
+#definitions:
 #INTEL - AVX512
-   - target_extension: "avx512"
-     ctype: "uin64_t"
-     lscpu_flags: ['bmi2']
-     implementation: "return _pdep64; //mask is integral already."
+#   - target_extension: "avx512"
+#     ctype: "uin64_t"
+#     lscpu_flags: ['bmi2']
+#     implementation: "return _pdep64; //mask is integral already."
 #INTEL - AVX2
-   - target_extension: "avx2"
-     ctype: "int64_t"
-     lscpu_flags: [ 'avx' ]
-     implementation: "return _mm256_movemask_pd( _mm256_castsi256_pd( vec_mask ) );"
+#   - target_extension: "avx2"
+#     ctype: "int64_t"
+#     lscpu_flags: [ 'avx' ]
+#     implementation: "return _mm256_movemask_pd( _mm256_castsi256_pd( vec_mask ) );"
 #INTEL - SSE
-   - target_extension: "sse"
-     ctype: "int64_t"
-     lscpu_flags: [ 'sse2' ]
-     implementation: "return _mm_movemask_pd( _mm_castsi128_pd( vec_mask ) );"
+#   - target_extension: "sse"
+#     ctype: "int64_t"
+#     lscpu_flags: [ 'sse2' ]
+#     implementation: "return _mm_movemask_pd( _mm_castsi128_pd( vec_mask ) );"
 #ARM - NEON
-   - target_extension: "neon"
-     ctype: "int64_t"
-     lscpu_flags: [ 'neon' ]
-     is_native: False
-     implementation: "return ( ( vec_mask[ 1 ] >> 62 ) & 0b10 ) | ( vec_mask[ 0 ] >> 63 );"
-...
+#   - target_extension: "neon"
+#     ctype: "int64_t"
+#     lscpu_flags: [ 'neon' ]
+#     is_native: False
+#     implementation: "return ( ( vec_mask[ 1 ] >> 62 ) & 0b10 ) | ( vec_mask[ 0 ] >> 63 );"
+#...
