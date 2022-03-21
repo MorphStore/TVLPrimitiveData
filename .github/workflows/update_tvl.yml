@@ -43,13 +43,14 @@ jobs:
            echo "$branch"
            if [[ "$branch" != *(main|HEAD) ]]; then
               echo "$branch"
-              git switch "$branch"
-              git merge --no-commit --no-ff main
-              git reset -- lib
-              git commit -am "Updated branch $branch"
-              git push
            fi
         done
+        exit 1
+#              git switch "$branch"
+#              git merge --no-commit --no-ff main
+#              git reset -- lib
+#              git commit -am "Updated branch $branch"
+#              git push       
     - name: Set up Python 3.10.2
       uses: actions/setup-python@v2
       with:
